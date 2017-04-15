@@ -1,21 +1,20 @@
 import React from 'react';
 import {render} from 'react-dom';
 import {browserHistory} from 'react-router';
-import NavBar from './Nav/NavBar.jsx'
-import NavSide from './Nav/NavSide.jsx'
-import TeacherViewContainer from './TeacherViewContainer.jsx'
-import HomeView from './HomeView.jsx'
-import Login from './Login.jsx';
-import css from '../css/nav.css';
+import Chart from './data_visualisation/Chart.jsx';
+import { processData } from './data_visualisation/statisticsHelpers.js';
 
-class App extends React.Component {
+class StatisticsView extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      // State variables to go here
+      currentClassId: 'Current Class Id',
+      currentClassName: 'Current Class Name',
+      classTestData: null,
+      errorLoadingData: null
     };
-
+    console.log('in stat view!!!!!');
     // this.handleSomeEvent = this.handleSomeEvent.bind(this);
   }
 
@@ -23,8 +22,18 @@ class App extends React.Component {
 // Component Lifecycle Functions
 // --------------------------------------------------------------------
 
-  componentDidMount() {
-
+  componentWillMount() {
+    processData(1)
+      .then((data) => {
+        this.setState({
+          classTestData: data
+        });
+      })
+      .catch((error) => {
+        this.setState({
+          errorLoadingData: error.message
+        })
+      });
   }
 // --------------------------------------------------------------------
 
@@ -38,20 +47,16 @@ class App extends React.Component {
   }
 // --------------------------------------------------------------------
 
-// <div className="construction">
-//   <p>Under Construction!</p>
-// </div>
-
   render() {
     return (
       <div>
-        {"StatisticsView"}
+        {!this.state.classTestData && !this.state.errorLoadingData && <p>Loading</p>}
+        {this.state.errorLoadingData && <p>Error! {this.state.errorLoadingData}</p>}
+        {this.state.classTestData && <Chart {...this.state} />}
       </div>
-    );
+    )
   }
 
 }
 
-export default App;
-
-//{this.props.children}
+export default StatisticsView;

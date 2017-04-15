@@ -94,9 +94,9 @@ def find_paper(image):
 
 	# Error handling when largest four-cornered contour isn't approximate size of what paper should be.
 	# Client should relay message to User.
-	if perimeter < 2300 or perimeter > 3200:
+	if perimeter < 2600 or perimeter > 4500:
 		data['status'] = 400
-		data['message'] = 'Paper not found. Make sure image has a clear background'
+		data['message'] = 'Paper not found. Make sure image has a clear background, and box overlay outlines paper.'
 		return data# DEV: try alternate approaches when image has "textured" background.
 	
 	# straighten grayscale image.
@@ -143,9 +143,9 @@ def get_answers(answerSheetThresh):
 	# the bubbles will be just those contours with appropriate height and width
 	for c in contours:
 		x,y,w,h = cv.boundingRect(c)
-		# most bubbles have a width/height around 25-26 pixels. Upper bound increases if student goes outside bubble
-		if 23 <= w <= 30:
-			if 23 <= h <= 30:
+		# most bubbles have a width/height around 27-28 pixels. Upper bound increases if student goes outside bubble
+		if 23 <= w <= 34:
+			if 23 <= h <= 34:
 				bubbles.append(c)
 
 	# Error handling when not 140 bubbles found
@@ -209,8 +209,9 @@ def get_answers(answerSheetThresh):
 			cv.drawContours(mask, [questions[i][j]], -1, 255, -1)
 			mask = cv.bitwise_and(answerSheetThresh, answerSheetThresh, mask=mask)
 			total = cv.countNonZero(mask)
-			# 280 seems to be a good cutoff point. DEV: Check with other pens, lighting, etc.
-			if total >= 280:
+			# 350 seems to be a good cutoff point. Most bubbled in are over 500. Not bubbled around 120-200. Leave some upper space for pencil erased.
+			# DEV: Check with other pens, lighting, etc.
+			if total >= 350:
 				answers[i].append(circlesToLetters[j])
 
 	return answers
@@ -271,8 +272,34 @@ def get_id(idSheetThresh):
 	return idString
 
 
-# uncomment for DEV/DEBUG
+# URLs for Development / Debug
+
+# Each is pretty standard shot (of same answer key):
 # sampleURL = 'http://res.cloudinary.com/dn4vqx2gu/image/upload/v1487892182/p6ybu5bjev1nnfkpebcc.jpg'
+# sampleURL = 'http://res.cloudinary.com/dn4vqx2gu/image/upload/v1489173282/prn9pepikh7jbgpvbrm9.jpg'
+# sampleURL = 'http://res.cloudinary.com/dn4vqx2gu/image/upload/v1489173208/qb3vzxhvq7j2rrtspuql.jpg'
+# sampleURL = 'http://res.cloudinary.com/dn4vqx2gu/image/upload/v1489173066/fsuf7w3es6legdunq5tf.jpg'
+# sampleURL = 'http://res.cloudinary.com/dn4vqx2gu/image/upload/v1489172330/uwexe9clmpc72cwdqevs.jpg'
+# sampleURL = 'http://res.cloudinary.com/dn4vqx2gu/image/upload/v1489171760/uey1y9twfiqaqeduplbs.jpg'
+# sampleURL = 'http://res.cloudinary.com/dn4vqx2gu/image/upload/v1489171618/lelakfo0etcruo6guoho.jpg'
+# sampleURL = 'http://res.cloudinary.com/dn4vqx2gu/image/upload/v1489172961/z0edbtb0l83sgpefzjoo.jpg'
+# sampleURL = 'http://res.cloudinary.com/dn4vqx2gu/image/upload/v1489131555/s9ya7wmu94dr2hzympqh.jpg'
+
+
+# Different background:
+# sampleURL = 'http://res.cloudinary.com/dn4vqx2gu/image/upload/v1489125242/csid0qghuh1g64kd04qr.jpg'
+
+# Other images:
+# sampleURL = 'sampleURL = 'http://res.cloudinary.com/dn4vqx2gu/image/upload/v1488672122/rzcckliek05taq6a2pul.jpg'
+
+# ************
+
+# DEV TO DO: These black pen images do not currently work
+# sampleURL = 'http://res.cloudinary.com/dn4vqx2gu/image/upload/v1488670680/ngx0eff2rdwojfln0yl4.jpg'
+# sampleURL = 'http://res.cloudinary.com/dn4vqx2gu/image/upload/v1488670898/alyzmvcwdrsfyzd0yscp.jpg'
+
+# ************
+
 # print scan_image(sampleURL)
 
 
